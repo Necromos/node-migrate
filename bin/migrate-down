@@ -23,6 +23,7 @@ program
   .option('--compiler <ext:module>', 'Use the given module to compile files')
   .option('--env [name]', 'Use dotenv to load an environment file')
   .option('-F, --force', 'Force through the command, ignoring warnings')
+  .option('--dry-run', 'Dry run commands without making any changes')
   .parse(process.argv)
 
 // Change the working dir
@@ -43,11 +44,13 @@ if (program.compiler) {
   registerCompiler(program.compiler)
 }
 
+if (program.dryRun) require('../lib/dry-run-decorators');
+
 // Setup store
 if (program.store[0] === '.') program.store = path.join(process.cwd(), program.store)
 
 var Store = require(program.store)
-var store = new Store(program.stateFile)
+var store = new Store(program.stateFile, program.dryRun)
 
 // Load in migrations
 migrate.load({

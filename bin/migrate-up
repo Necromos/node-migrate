@@ -25,6 +25,7 @@ program
   .option('--matches <glob>', 'A glob pattern to filter migration files', '*')
   .option('--compiler <ext:module>', 'Use the given module to compile files')
   .option('--env [name]', 'Use dotenv to load an environment file')
+  .option('--dry-run', 'Dry run commands without making any changes')
   .parse(process.argv)
 
 // Change the working dir
@@ -61,7 +62,7 @@ if (program.compiler) {
 if (program.store[0] === '.') program.store = path.join(process.cwd(), program.store)
 
 var Store = require(program.store)
-var store = new Store(program.stateFile)
+var store = new Store(program.stateFile, program.dryRun)
 
 // Call store init
 if (program.init && typeof store.init === 'function') {
@@ -72,6 +73,8 @@ if (program.init && typeof store.init === 'function') {
 } else {
   loadAndGo()
 }
+
+if (program.dryRun) require('../lib/dry-run-decorators');
 
 // Load in migrations
 function loadAndGo () {
