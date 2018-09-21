@@ -9,7 +9,7 @@
  */
 
 const MigrationSet = require('./lib/set');
-const FileStore = require('./lib/file-store');
+const FileStore = require('./lib/stores/FileStore');
 const loadMigrationsIntoSet = require('./lib/load-migrations');
 
 /**

@@ -2,7 +2,7 @@
 'use strict'
 const path = require('path')
 const assert = require('assert')
-const FileStore = require('../lib/file-store')
+const FileStore = require('../lib/stores/FileStore')
 
 const BASE = path.join(__dirname, 'fixtures', 'file-store')
 const MODERN_STORE_FILE = path.join(BASE, 'good-store')

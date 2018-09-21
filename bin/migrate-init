@@ -11,7 +11,7 @@ const registerCompiler = require('../lib/register-compiler')
 program
   .version(pkg.version)
   .option('-f, --state-file <path>', 'Set path to state file', '.migrate')
-  .option('-s, --store <store>', 'Set the migrations store', path.join(__dirname, '..', 'lib', 'file-store'))
+  .option('-s, --store <store>', 'Set the migrations store', path.join(__dirname, '..', 'lib', 'stores', 'FileStore'))
   .option('--migrations-dir <dir>', 'Change the migrations directory name', 'migrations')
   .option('--compiler <ext:module>', 'Use the given module to compile files')
   .option('-c, --chdir [dir]', 'Change the working directory', process.cwd())
