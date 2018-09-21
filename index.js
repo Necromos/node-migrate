@@ -8,7 +8,7 @@
  * Module dependencies.
  */
 
-const MigrationSet = require('./lib/set');
+const MigrationSet = require('./lib/MigrationSet');
 const FileStore = require('./lib/stores/FileStore');
 const loadMigrationsIntoSet = require('./lib/load-migrations');
 

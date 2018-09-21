@@ -3,7 +3,7 @@
 const program = require('commander')
 const path = require('path')
 const dotenv = require('dotenv')
-const log = require('../lib/log')
+const log = require('../lib/loggers/log')
 const registerCompiler = require('../lib/register-compiler')
 const pkg = require('../package.json')
 
@@ -22,7 +22,7 @@ const create = (name) => {
   // Load the template generator
   const gen = require(program.generator);
   gen({
-    name: name,
+    name,
     dateFormat: program.dateFormat,
     templateFile: program.templateFile,
     migrationsDirectory: program.migrationsDir,

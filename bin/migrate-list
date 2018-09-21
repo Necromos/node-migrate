@@ -6,7 +6,7 @@ const dateFormat = require('dateformat')
 const minimatch = require('minimatch')
 const dotenv = require('dotenv')
 const migrate = require('../')
-const log = require('../lib/log')
+const log = require('../lib/loggers/log')
 const registerCompiler = require('../lib/register-compiler')
 const pkg = require('../package.json')
 

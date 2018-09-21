@@ -4,7 +4,7 @@ const program = require('commander')
 const mkdirp = require('mkdirp')
 const dotenv = require('dotenv')
 const path = require('path')
-const log = require('../lib/log')
+const log = require('../lib/loggers/log')
 const pkg = require('../package.json')
 const registerCompiler = require('../lib/register-compiler')
 
