@@ -1,16 +1,14 @@
 #!/usr/bin/env node
-// vim: set ft=javascript:
-'use strict'
 
-var program = require('commander')
-var path = require('path')
-var dateFormat = require('dateformat')
-var minimatch = require('minimatch')
-var dotenv = require('dotenv')
-var migrate = require('../')
-var log = require('../lib/log')
-var registerCompiler = require('../lib/register-compiler')
-var pkg = require('../package.json')
+const program = require('commander')
+const path = require('path')
+const dateFormat = require('dateformat')
+const minimatch = require('minimatch')
+const dotenv = require('dotenv')
+const migrate = require('../')
+const log = require('../lib/log')
+const registerCompiler = require('../lib/register-compiler')
+const pkg = require('../package.json')
 
 program
   .version(pkg.version)
@@ -23,56 +21,50 @@ program
   .option('--matches <glob>', 'A glob pattern to filter migration files', '*')
   .option('--compiler <ext:module>', 'Use the given module to compile files')
   .option('--env [name]', 'Use dotenv to load an environment file')
-  .parse(process.argv)
+  .parse(process.argv);
 
 // Check clean flag, exit if NODE_ENV === 'production' and force not specified
 if (program.clean && process.env.NODE_ENV === 'production' && !program.force) {
-  log.error('error', 'Cowardly refusing to clean while node environment set to production, use --force to continue.')
-  process.exit(1)
+  log.error('error', 'Cowardly refusing to clean while node environment set to production, use --force to continue.');
+  process.exit(1);
 }
 
 // Change the working dir
-process.chdir(program.chdir)
+process.chdir(program.chdir);
 
 // Setup environment
 if (program.env) {
-  var e = dotenv.config({
-    path: typeof program.env === 'string' ? program.env : '.env'
+  const e = dotenv.config({
+    path: typeof program.env === 'string' ? program.env : '.env',
   })
-  if (e && e.error instanceof Error) {
-    throw e.error
-  }
+  if (e && e.error instanceof Error) throw e.error;
 }
 
 // Load compiler
-if (program.compiler) {
-  registerCompiler(program.compiler)
-}
+if (program.compiler) registerCompiler(program.compiler);
 
 // Setup store
-if (program.store[0] === '.') program.store = path.join(process.cwd(), program.store)
+if (program.store[0] === '.') program.store = path.join(process.cwd(), program.store);
 
-var Store = require(program.store)
-var store = new Store(program.stateFile)
+const Store = require(program.store)
+const store = new Store(program.stateFile)
 
 // Load in migrations
 migrate.load({
   stateStore: store,
   migrationsDirectory: program.migrationsDir,
   filterFunction: minimatch.filter(program.matches)
-}, function (err, set) {
+}, (err, set) => {
   if (err) {
-    log.error('error', err)
-    process.exit(1)
+    log.error('error', err);
+    process.exit(1);
   }
 
-  if (set.migrations.length === 0) {
-    return log('list', 'No Migrations')
-  }
+  if (set.migrations.length === 0) return log('list', 'No Migrations');
 
-  set.migrations.forEach(function (migration) {
+  set.migrations.forEach((migration) => {
     log(migration.title + (migration.timestamp ? ' [' + dateFormat(migration.timestamp, program.dateFormat) + ']' : ' [not run]'), migration.description || '<No Description>')
-  })
+  });
 
-  process.exit(0)
+  process.exit(0);
 })

@@ -1,16 +1,14 @@
 #!/usr/bin/env node
-// vim: set ft=javascript:
-'use strict'
 
-var program = require('commander')
-var path = require('path')
-var minimatch = require('minimatch')
-var dotenv = require('dotenv')
-var migrate = require('../')
-var runMigrations = require('../lib/migrate')
-var log = require('../lib/log')
-var registerCompiler = require('../lib/register-compiler')
-var pkg = require('../package.json')
+const program = require('commander')
+const path = require('path')
+const minimatch = require('minimatch')
+const dotenv = require('dotenv')
+const migrate = require('../')
+const runMigrations = require('../lib/migrate')
+const log = require('../lib/log')
+const registerCompiler = require('../lib/register-compiler')
+const pkg = require('../package.json')
 
 program
   .version(pkg.version)
@@ -23,34 +21,30 @@ program
   .option('--compiler <ext:module>', 'Use the given module to compile files')
   .option('--env [name]', 'Use dotenv to load an environment file')
   .option('-F, --force', 'Force through the command, ignoring warnings')
-  .option('--dry-run', 'Dry run commands without making any changes')
-  .parse(process.argv)
+  .option('-D, --dry-run', 'Dry run commands without making any changes')
+  .parse(process.argv);
 
 // Change the working dir
-process.chdir(program.chdir)
+process.chdir(program.chdir);
 
 // Setup environment
 if (program.env) {
-  var e = dotenv.config({
-    path: typeof program.env === 'string' ? program.env : '.env'
-  })
-  if (e && e.error instanceof Error) {
-    throw e.error
-  }
+  const e = dotenv.config({
+    path: typeof program.env === 'string' ? program.env : '.env',
+  });
+  if (e && e.error instanceof Error) throw e.error;
 }
 
 // Load compiler
-if (program.compiler) {
-  registerCompiler(program.compiler)
-}
+if (program.compiler) registerCompiler(program.compiler);
 
-if (program.dryRun) require('../lib/dry-run-decorators');
+if (program.dryRun) require('../lib/dry-run-rewriters');
 
 // Setup store
-if (program.store[0] === '.') program.store = path.join(process.cwd(), program.store)
+if (program.store[0] === '.') program.store = path.join(process.cwd(), program.store);
 
-var Store = require(program.store)
-var store = new Store(program.stateFile, program.dryRun)
+const Store = require(program.store);
+const store = new Store(program.stateFile, program.dryRun);
 
 // Load in migrations
 migrate.load({
@@ -58,23 +52,21 @@ migrate.load({
   migrationsDirectory: program.migrationsDir,
   filterFunction: minimatch.filter(program.matches),
   ignoreMissing: program.force
-}, function (err, set) {
+}, (err, set) => {
   if (err) {
-    log.error('error', err)
-    process.exit(1)
+    log.error('error', err);
+    process.exit(1);
   }
 
-  set.on('migration', function (migration, direction) {
-    log(direction, migration.title)
-  })
+  set.on('migration', (migration, direction) => log(direction, migration.title));
 
-  runMigrations(set, 'down', program.args[0], function (err) {
+  runMigrations(set, 'down', program.args[0], (err) => {
     if (err) {
-      log('error', err)
-      process.exit(1)
+      log('error', err);
+      process.exit(1);
     }
 
-    log('migration', 'complete')
-    process.exit(0)
-  })
+    log('migration', 'complete');
+    process.exit(0);
+  });
 })
